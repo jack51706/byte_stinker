@@ -14,7 +14,7 @@ Please note that this assumes that all binaries are .exe's, and supports x64 bin
 
 If the binary is packed you'll need to dump the process's memory before trying to use byte_stinker
 
-If there's multiple, you'll need to redump the first PE header to seperate the first with the second (will be fixed later on)
+If there's multiple, you'll have to manually remove the second PE header to seperate the first with the second (will be fixed later on)
 
 For more PE reference refer to : https://docs.microsoft.com/en-us/windows/win32/debug/pe-format?redirectedfrom=MSDN
 
