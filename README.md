@@ -17,3 +17,7 @@ If the binary is packed you'll need to dump the process's memory before trying t
 If there's multiple, you'll need to redump the first PE header to seperate the first with the second (will be fixed later on)
 
 For more PE reference refer to : https://docs.microsoft.com/en-us/windows/win32/debug/pe-format?redirectedfrom=MSDN
+
+# Demonstration
+![Exampler](https://i.imgur.com/0SCcV1Z.png)
+input args : byte_stinker pe_location output_path_name
