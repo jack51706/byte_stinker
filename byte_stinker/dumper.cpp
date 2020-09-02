@@ -63,43 +63,52 @@ namespace dumper
 
 		auto pe_header = (std::uint8_t*)convert_to_bytes(pe_path, &size); // get the size of the program to loop.
 
-		for (auto i = 0; i < size; i++)
+		if (pe_header != nullptr)
 		{
-			// MZ (dos-stub)
-			// should be cleaned up or perferrably look for something more reliable (ex. dos-stub).
-			if (pe_header[i] == 0x4D && pe_header[i + 1] == 0x5A && pe_header[i + 2] == 0x90 && pe_header[i + 3] == 0x00 && pe_header[i + 4] == 0x03)
+			if (is_valid_pe(pe_header))
 			{
-				pe_files.push_back(pe_header + i);
-
-				for (auto header : pe_files)
+				for (auto i = 0; i < size; i++)
 				{
-					if (i != 0 && last_pe != i) // make's sure that it's not the first MZ header (the real program) and isn't repeating the the same PE header.
+					// MZ (dos-stub)
+					// should be cleaned up or perferrably look for something more reliable (ex. dos-stub).
+					if (pe_header[i] == 0x4D && pe_header[i + 1] == 0x5A && pe_header[i + 2] == 0x90 && pe_header[i + 3] == 0x00 && pe_header[i + 4] == 0x03)
 					{
-						if (is_valid_pe(header))
-						{
-							auto dos_header = (PIMAGE_DOS_HEADER)(header);
-							auto ntheader = (PIMAGE_NT_HEADERS64)((uint64_t)header + dos_header->e_lfanew);
-							output::debug_print(true, "Found MZ header! 0x%X", i);
-							output::debug_print(true, "Writing binary to given location....");
-							std::string output = stored_location + output::text_format("_%i.exe", dumped); // assumes EXE (figure it yourseslf within the dissasembly or else.)
-							byte_to_disk(output, (const char*)header + i, size - i); // should be optimized..... (will push a git update in a few days when im home)
-						}
+						pe_files.push_back(pe_header + i);
 
-						last_pe = i; // to only get the MZ header location once (of the same PE)
-						dumped++;
+						for (auto header : pe_files)
+						{
+							if (i != 0 && last_pe != i) // make's sure that it's not the first MZ header (the real program) and isn't repeating the the same PE header.
+							{
+								if (is_valid_pe(header))
+								{
+									auto dos_header = (PIMAGE_DOS_HEADER)(header + i);
+									auto ntheader = (PIMAGE_NT_HEADERS64)((uint64_t)(header + i) + dos_header->e_lfanew);
+									output::debug_print(true, "Found MZ header! 0x%X", i);
+									output::debug_print(true, "Writing binary to given location....");
+
+									std::string output = stored_location + output::text_format("_%i.exe", dumped); // assumes EXE (figure it yourseslf within the dissasembly or else.)
+									byte_to_disk(output, (const char*)dos_header, size - i); // should be optimized..... (will push a git update in a few days when im home)
+								}
+
+								last_pe = i; // to only get the MZ header location once (of the same PE)
+								dumped++;
+							}
+						}
 					}
 				}
+
+				// verify that it did actually find PE files to dump.
+				if (pe_files.size())
+				{
+					output::debug_print(true, "Dumped %d PE(s)!", dumped);
+					return true;
+				}
+				
+				output::debug_print(false, "Failed to find PE files embedded in program. If it's packed please unpack before using byte_stinker (dump PE)");
+				return false;
 			}
 
-			// verify that it did actually find PE files to dump.
-			if (pe_files.size())
-			{
-				output::debug_print(true, "Dumped %d PE(s)!", dumped);
-				return true;
-			}
-				
-			output::debug_print(false, "Failed to find PE files embedded in program. If it's packed please unpack before using byte_stinker (dump PE)");
-			return false;
+			output::debug_print(false, "Not a VALID PE header!");
 		}
 
 		output::debug_print(false, "Failed to convert program to byte array.");
