@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv)
 {
-	SetConsoleTitleA("byte_stinker | beta v1.0");
+	SetConsoleTitleA("byte_stinker | beta v1.1");
 
 	if (argc < 3)
 	{
@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	output::debug_print(true, "Loaded byte_stinker! [BUILD v1.0]");
+	output::debug_print(true, "Loaded byte_stinker! [BUILD v1.1]");
 
 	dumper::dump_stored_binary(argv[1], argv[2]);
 }

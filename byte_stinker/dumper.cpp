@@ -87,7 +87,18 @@ namespace dumper
 									output::debug_print(true, "Writing binary to given location....");
 
 									std::string output = stored_location + output::text_format("_%i.exe", dumped); // assumes EXE (figure it yourseslf within the dissasembly or else.)
-									byte_to_disk(output, (const char*)dos_header, size - i); // should be optimized..... (will push a git update in a few days when im home)
+
+
+									auto end_pe = is_last_pe(header + i, size - i);
+									if (end_pe)
+									{
+										byte_to_disk(output, (const char*)dos_header, end_pe); 
+									}
+									else
+									{
+										output::debug_print(false, "Last PE detected!");
+										byte_to_disk(output, (const char*)dos_header, size - i); 
+									}
 								}
 
 								last_pe = i; // to only get the MZ header location once (of the same PE)
@@ -113,6 +124,20 @@ namespace dumper
 
 		output::debug_print(false, "Failed to convert program to byte array.");
 		return false;
+	}
+
+	int is_last_pe(std::uint8_t* image, size_t size)
+	{
+
+		for (auto i = 0; i < size; i++)
+		{
+			if (image[i] == 0x4D && image[i + 1] == 0x5A && image[i + 2] == 0x90 && image[i + 3] == 0x00 && image[i + 4] == 0x03 && i != 0)
+			{
+				return i;
+			}
+		}
+
+		return 0;
 	}
 
 	bool byte_to_disk(const std::string& stored_location, const char* bytes, size_t size)
