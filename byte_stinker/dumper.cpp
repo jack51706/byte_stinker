@@ -98,9 +98,9 @@ namespace dumper
 				return true;
 			}
 				
-				output::debug_print(false, "Failed to find PE files embedded in program. If it's packed please unpack before using byte_stinker (dump PE)");
-				return false;
-			}
+			output::debug_print(false, "Failed to find PE files embedded in program. If it's packed please unpack before using byte_stinker (dump PE)");
+			return false;
+		}
 
 		output::debug_print(false, "Failed to convert program to byte array.");
 		return false;
