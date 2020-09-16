@@ -12,7 +12,7 @@ namespace dumper
 			return false;
 		}
 
-		const auto nt_header = (PIMAGE_NT_HEADERS64)((uint64_t)image + dos_header->e_lfanew);
+		const auto nt_header = (PIMAGE_NT_HEADERS)((uint64_t)image + dos_header->e_lfanew);
 		if (nt_header->Signature != IMAGE_NT_SIGNATURE)
 		{
 			output::debug_print(false, "Invalid NtHeader signature.");
