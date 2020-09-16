@@ -22,3 +22,5 @@ For more PE reference refer to : [PE Format](https://docs.microsoft.com/en-us/wi
 ![Exampler](https://i.imgur.com/0SCcV1Z.png)
 
 input args : byte_stinker pe_location output_path_name
+
+Disclaimer : I do not plan on updating this anymore. I may plan on creating a seperate branch for runtime based scans through all modules of a specified process, but only If I have time. You can easily distinguish what is a DLL/EXE/System File by either it's imports, PE characteristics (IMAGE_FILE_DLL, IMAGE_FILE_SYSTEM, etc.).
